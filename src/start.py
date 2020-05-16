@@ -1,18 +1,20 @@
 #-*- coding:utf-8 -*-
 import time
 from dhbw_iot_csv.csv_writer import CsvWriter
-from sensorthread import DistanceSensorThread
+from utils.sensorthread import DistanceSensorThread
+from utils.messageBroker import MessageBroker
 # Start der Anwendung
 
 if __name__ == "__main__":
     
-    csvHeader = ['sensorId', 'timestamp', 'distance', 'unit']
-    csv_writer = CsvWriter("log.csv", csvHeader)
-
     running = True 
+    broker = MessageBroker()
+
+    csvHeader = ['sensorId', 'timestamp', 'distance', 'unit']
+    csv_writer = CsvWriter("log.csv", csvHeader, broker)
 
     handlers = [
-        DistanceSensorThread(running, csv_writer)
+        DistanceSensorThread(running, broker)
         ]
 
     #if handlers[0].exception: 
