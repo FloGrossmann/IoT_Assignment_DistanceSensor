@@ -54,5 +54,6 @@ class DistanceSensor:
                 "unit": "cm"
                 }
 
-    def clean(self):
+    def __del__(self):
+        print("Cleaning up GPIO pins")
         GPIO.cleanup()
