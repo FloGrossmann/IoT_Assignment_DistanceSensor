@@ -6,7 +6,9 @@ import csv
 class CsvWriter:
 
     #  Initialisierung
-    def __init__(self, filename, fieldnames):
+    def __init__(self, filename, fieldnames, broker):
+        self.broker = broker
+        self.broker.sub("iot-distance-sensor/data", self.write_line)
         self.filename = filename
         self.fieldnames = fieldnames
         # Need to os.path.exists before opening file -> opening file creates it if it is not there
