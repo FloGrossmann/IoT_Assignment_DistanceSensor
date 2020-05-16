@@ -2,6 +2,7 @@
 import os
 import json
 import csv
+from loguru import logger
 
 class CsvWriter:
 
@@ -14,6 +15,7 @@ class CsvWriter:
         # Need to os.path.exists before opening file -> opening file creates it if it is not there
         writeheaders = False
         if not os.path.exists(self.filename):
+            logger.info("Creating the csv-file {} to store data", self.filename)
             writeheaders = True
         with open(self.filename, "a") as file:
             writer = csv.DictWriter(file, self.fieldnames)
@@ -24,7 +26,7 @@ class CsvWriter:
 
     #  line: ist die bereits formatierte Zeile, die nur noch geschrieben wird.
     def write_line (self, line):
-        print("Writing line: ", line)
+        logger.trace("Writing line: {} to csv", line)
         with open(self.filename, "a") as file:
             writer = csv.DictWriter(file, self.fieldnames)
             writer.writerow(line)

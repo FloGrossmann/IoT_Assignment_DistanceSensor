@@ -2,6 +2,7 @@
 import threading
 import time
 from sensor.distance_sensor import DistanceSensor
+from loguru import logger
 
 class DistanceSensorThread:
 
@@ -16,18 +17,23 @@ class DistanceSensorThread:
         threading.Thread(target=self.startThread, name="iot-sensor-thread", args=()).start()
 
     def startThread(self):
-        print("Starting sensorThread")
+        logger.info("Starting sensorThread")
         while (not self.start and self.running):
-            print("Waiting for startMeasurement() call... ")
+            logger.info("Waiting until mqtt is ready (startMeasurement() call) ")
             time.sleep(1)
-        print("Starting measurement")
+        logger.info("Beginning measurement")
         try:
             while self.running:
                 valueRead = DistanceSensorThread.distanceSensor.read_value()
+                logger.debug(valueRead)
+                if int(valueRead["distance"]) < 2 or int(valueRead["distance"]) > 300:
+                    # Just print a warning if we measure things outside of the given sensor range
+                    logger.warning("unsafe measurement {}, because it is < 2cm or > 300cm - outside of sensor spec!", valueRead)
                 self.broker.publish("iot-distance-sensor/data", valueRead)
                 time.sleep(1.0)
+
             # Clean up!
-            print("SensorThread stopped")
+            logger.info("SensorThread stopped")
         except Exception:
             self.exception = True
         finally:

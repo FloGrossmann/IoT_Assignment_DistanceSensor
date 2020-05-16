@@ -3,6 +3,7 @@
 import time, datetime
 import RPi.GPIO as GPIO
 import threading
+from loguru import logger
 
 class DistanceSensor:
 
@@ -19,6 +20,7 @@ class DistanceSensor:
         GPIO.setup(DistanceSensor.Trigger_AusgangsPin, GPIO.OUT)
         GPIO.setup(DistanceSensor.Echo_EingangsPin, GPIO.IN)
         GPIO.output(DistanceSensor.Trigger_AusgangsPin, False)
+        logger.trace("DistanceSensor setup")
 
     #  return Wert als Dictionary entsprechend folgendem JSON:
     #   { 
@@ -28,6 +30,7 @@ class DistanceSensor:
     #     "unit" : "cm"
     #   }
     def read_value(self):
+        logger.trace("read new value")
         # Abstandsmessung wird mittels des 10us langen Triggersignals gestartet
         GPIO.output(DistanceSensor.Trigger_AusgangsPin, True)
         time.sleep(0.00001)
@@ -55,5 +58,5 @@ class DistanceSensor:
                 }
 
     def __del__(self):
-        print("Cleaning up GPIO pins")
+        logger.info("Cleaning up GPIO pins")
         GPIO.cleanup()

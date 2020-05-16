@@ -2,6 +2,7 @@ import paho.mqtt.client as mqtt
 import json
 import threading
 from alerts.alert_service import AlertService
+from loguru import logger
 
 class MQTTManager:
 	
@@ -17,7 +18,7 @@ class MQTTManager:
 			self.mqttClient.connect(self.config["broker_host"], self.config["broker_port"])
 			self.mqttClient.on_message = self.on_MQTTMessage
 			self.mqttClient.subscribe(self.config["config_topic"], qos=1)
-			print("Subscribed to mqtt topic: ", self.config["config_topic"])
+			logger.info("Subscribed to mqtt topic: {}", self.config["config_topic"])
 
 			# Listen to the broker topics
 			self.broker = broker
@@ -32,10 +33,10 @@ class MQTTManager:
 			self.exception = True
 
 	def run(self):
-		print("Starting MQTT Thread")
+		logger.info("Starting MQTT Thread")
 		while self.running:
 				self.mqttClient.loop_start()
-		print("MQTT Thread stopped")
+		logger.info("MQTT Thread stopped")
 
 	def set_running(self, running):
 		self.running = running
@@ -51,6 +52,6 @@ class MQTTManager:
 
 	def on_MQTTMessage(self, client, userdata, message):
 		newThreshold = int(message.payload.decode())
-		print("Received new alert threshold setting: ", newThreshold)
+		logger.info("Received new alert threshold setting: {}", newThreshold)
 		if message.topic == self.config["config_topic"]:
 			self.broker.publish("iot-distance-sensor/alarmthreshold", newThreshold)

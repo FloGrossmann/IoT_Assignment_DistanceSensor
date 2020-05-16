@@ -1,5 +1,6 @@
 #-*- coding:utf-8 -*-
 import time
+from loguru import logger
 
 class AlertService: # Service Reagiert auf Messwerte
 
@@ -13,12 +14,12 @@ class AlertService: # Service Reagiert auf Messwerte
 
     #  value:  Neuer Schwellwert als einfache Zahl in der Einheit cm wird hier übergeben
     def setAlertThreshold(self, value):
-        print("Setting new alert threshold to ", value, "cm")
+        logger.info("Setting new alert threshold to {} cm", value)
         AlertService.alertDistance = value #min(300,value) # Der Sensorschwellwert darf nicht über die Grenzen der Hardware raus
 
     #  value:  Aktuell gemessener Wert (siehe DistanceSensor) wird übergeben und es wird ein Alarm gesendet
     def on_distance_threshold_passed(self, dictRead):
-        print("Alert!! Distance is less than: ", AlertService.alertDistance, "cm")
+        logger.warning("Alert!! Distance is less than: {} cm: {} cm detected", AlertService.alertDistance, dictRead["distance"])
         self.broker.publish("iot-distance-sensor/alarm", dictRead)
 
     def checkAlert(self, dictRead):
