@@ -5,8 +5,6 @@ from alerts.alert_service import AlertService
 from loguru import logger
 
 class MQTTManager:
-	
-	mqttClient = None
 
 	def __init__(self, running, broker, config):
 		try:
