@@ -1,6 +1,7 @@
 import paho.mqtt.client as mqtt
 import json
 import threading
+from alerts.alert_service import AlertService
 
 class MQTTManager:
 	
@@ -39,12 +40,13 @@ class MQTTManager:
 	def set_running(self, running):
 		self.running = running
 
-	def writeData(self, message):
+	def writeData(self, dictReading):
 		#print("Publishing data to topic " + self.config["data_topic"])
-		self.mqttClient.publish(topic=self.config["data_topic"], payload=json.dumps(message), qos=1, retain=False)
+		self.mqttClient.publish(topic=self.config["data_topic"], payload=json.dumps(dictReading), qos=1, retain=False)
 
-	def writeAlarm(self, message):
+	def writeAlarm(self, dictReading):
 		#print("Publishing alarm to topic " + self.config["alert_topic"])
+		message = "Alert! Detected distance of >" + str(dictReading["distance"]) + "< cm which is less than the configured " + str(AlertService.alertDistance) + "cm!"
 		self.mqttClient.publish(topic=self.config["alert_topic"], payload=json.dumps(message), qos=1, retain=False)
 
 	def on_MQTTMessage(self, client, userdata, message):
