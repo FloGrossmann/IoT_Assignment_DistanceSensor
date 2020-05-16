@@ -24,7 +24,6 @@ class CsvWriter:
 
     #  line: ist die bereits formatierte Zeile, die nur noch geschrieben wird.
     def write_line (self, line):
-        print(self.fieldnames)
         print("Writing line: ", line)
         with open(self.filename, "a") as file:
             writer = csv.DictWriter(file, self.fieldnames)
